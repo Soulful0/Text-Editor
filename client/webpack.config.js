@@ -2,7 +2,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 const path = require("path");
 const { InjectManifest } = require("workbox-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = () => {
   return {
@@ -20,11 +19,12 @@ module.exports = () => {
         template: "./index.html",
         title: "Webpack Plugin",
       }),
-      new MiniCssExtractPlugin({
-        filename: "[name].css",
-      }),
       new WebpackPwaManifest({
         name: "My Progressive Web App",
+        publicPath: "/",
+        start_url: "/",
+        fingerprints: true,
+        inject: true,
         short_name: "MyPWA",
         description: "My Progressive Web App by Josh Gingold",
         background_color: "#333333",
@@ -37,7 +37,7 @@ module.exports = () => {
         ],
       }),
       new InjectManifest({
-        swSrc: "/src-sw.js",
+        swSrc: "./src-sw.js",
         swDest: "service-worker.js",
       }),
     ],
@@ -45,10 +45,10 @@ module.exports = () => {
       rules: [
         {
           test: /\.css$/i,
-          use: [MiniCssExtractPlugin.loader, "css-loader"],
+          use: ["style-loader", "css-loader"],
         },
         {
-          test: /\.js$/,
+          test: /\.m?js$/,
           exclude: /node_modules/,
           use: {
             loader: "babel-loader",
